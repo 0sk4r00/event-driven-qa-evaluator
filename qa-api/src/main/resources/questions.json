@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "question": "Czym różni się proces od wątku?"
+  },
+  {
+    "id": 2,
+    "question": "Dlaczego w architekturze mikrousług stosuje się wzorzec DTO?"
+  },
+  {
+    "id": 3,
+    "question": "Do czego służy adnotacja @Autowired w Springu?"
+  },
+  {
+    "id": 4,
+    "question": "Co to jest Kafka Topic i czym różni się od partycji?"
+  },
+  {
+    "id": 5,
+    "question": "Jaka jest główna zaleta stosowania kontenerów Dockerowych zamiast maszyn wirtualnych?"
+  },
+  {
+    "id": 6,
+    "question": "Czym różni się interfejs od klasy abstrakcyjnej w Javie?"
+  },
+  {
+    "id": 7,
+    "question": "Co to jest REST API i jakich podstawowych metod HTTP używa?"
+  },
+  {
+    "id": 8,
+    "question": "Czym różni się komunikacja synchroniczna (np. HTTP) od asynchronicznej (np. Kafka)?"
+  },
+  {
+    "id": 9,
+    "question": "Do czego służy plik docker-compose.yml?"
+  },
+  {
+    "id": 10,
+    "question": "Jak działa mechanizm Garbage Collector w Javie?"
+  }
+]
