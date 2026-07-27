@@ -1,6 +1,6 @@
 package com.example.qaevaluator.listener;
 
-import com.example.qaevaluator.dto.QuestionEvaluationRequest;
+import com.example.qaevaluator.dto.QuestionDTO;
 import com.example.qaevaluator.service.LlamaEvaluationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class QuestionEvaluationListener {
 
     // TUTAJ dajemy adnotację Kafki
     @KafkaListener(topics = "qa-pending-evaluations", groupId = "qa-evaluator-group")
-    public void consume(QuestionEvaluationRequest request) {
+    public void consume(QuestionDTO request) {
         log.info("Odebrano zdarzenie do oceny dla ID: {}", request.id());
 
         // Wywołujemy Twój LlamaEvaluationService

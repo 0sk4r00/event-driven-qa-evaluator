@@ -1,6 +1,6 @@
 package com.example.qaevaluator.service;
 
-import com.example.qaevaluator.dto.QuestionEvaluationRequest;
+import com.example.qaevaluator.dto.QuestionDTO;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -18,7 +18,7 @@ public class LlamaEvaluationService {
         this.chatModel = chatModel;
     }
 
-    public String evaluateAnswer(QuestionEvaluationRequest request) {
+    public String evaluateAnswer(QuestionDTO request) {
         var systemMessage = new SystemMessage("""
             Jesteś obiektywnym egzaminatorem. Twoim zadaniem jest ocena odpowiedzi użytkownika na podstawie podanej odpowiedzi wzorcowej (referenceAnswer).
             Oceń odpowiedź w skali 0-10, podaj krótkie uzasadnienie oraz ewentualne punkty do poprawy.
@@ -26,9 +26,8 @@ public class LlamaEvaluationService {
 
         var userMessage = new UserMessage(String.format("""
             Pytanie: %s
-            Odpowiedź wzorcowa: %s
             Odpowiedź użytkownika: %s
-            """, request.question(), request.referenceAnswer(), request.userAnswer()));
+            """, request.question(), request.userAnswer()));
 
         // Spring AI sam buduje JSON, wysyła go do Groq i odbiera odpowiedź!
         var prompt = new Prompt(List.of(systemMessage, userMessage));

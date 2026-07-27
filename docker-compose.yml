@@ -8,10 +8,12 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      # Tworzymy 3 listenery: DOCKER (dla kontenerów), HOST (dla Twojego komputera/IDE), CONTROLLER (dla KRaft)
+      KAFKA_LISTENERS: DOCKER://0.0.0.0:19092,HOST://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: DOCKER://kafka:19092,HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER:PLAINTEXT,HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
@@ -27,33 +29,33 @@ services:
           connections:
             docker-kafka:
               properties:
-                bootstrap.servers: "kafka:9092"
+                bootstrap.servers: "kafka:19092"
     depends_on:
       - kafka
 
-  # 3. MODUŁ QA-API (Producent)
-  qa-api:
-    build:
-      context: ./qa-api
-      dockerfile: Dockerfile
-    container_name: qa-api
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    depends_on:
-      - kafka
+  # # 3. MODUŁ QA-API (Producent)
+  # qa-api:
+  #   build:
+  #     context: ./qa-api
+  #     dockerfile: Dockerfile
+  #   container_name: qa-api
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #   depends_on:
+  #     - kafka
 
-  # 4. MODUŁ QA-EVALUATOR (Konsument + LLM)
-  qa-evaluator:
-    build:
-      context: ./qa-evaluator
-      dockerfile: Dockerfile
-    container_name: qa-evaluator
-    ports:
-      - "8081:8081"
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      GROQ_API_KEY: ${GROQ_API_KEY}
-    depends_on:
-      - kafka
+  # # 4. MODUŁ QA-EVALUATOR (Konsument + LLM)
+  # qa-evaluator:
+  #   build:
+  #     context: ./qa-evaluator
+  #     dockerfile: Dockerfile
+  #   container_name: qa-evaluator
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #     GROQ_API_KEY: ${GROQ_API_KEY}
+  #   depends_on:
+  #     - kafka

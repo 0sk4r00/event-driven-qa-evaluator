@@ -1,8 +1,7 @@
 package com.example.qaevaluator.dto;
 
-public record QuestionEvaluationRequest(
+public record QuestionDTO(
         String id,
         String question,
-        String referenceAnswer,
         String userAnswer
 ) {}
