@@ -1,6 +1,6 @@
 package com.example.qaapi.service;
 
-import com.example.qaapi.dto.QuestionDto;
+import com.example.qaapi.dto.QuestionDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -14,7 +14,7 @@ import java.util.List;
 public class QuestionLoader {
 
     private final ObjectMapper objectMapper;
-    private List<QuestionDto> questions = Collections.emptyList();
+    private List<QuestionDTO> questions = Collections.emptyList();
 
     public QuestionLoader(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -24,14 +24,14 @@ public class QuestionLoader {
     public void init() {
         try (InputStream inputStream = getClass().getResourceAsStream("/questions.json")) {
             if (inputStream != null) {
-                questions = objectMapper.readValue(inputStream, new TypeReference<List<QuestionDto>>() {});
+                questions = objectMapper.readValue(inputStream, new TypeReference<List<QuestionDTO>>() {});
             }
         } catch (Exception e) {
             throw new RuntimeException("Nie udało się wczytać pytań z questions.json", e);
         }
     }
 
-    public List<QuestionDto> getAllQuestions() {
+    public List<QuestionDTO> getAllQuestions() {
         return questions;
     }
 }
