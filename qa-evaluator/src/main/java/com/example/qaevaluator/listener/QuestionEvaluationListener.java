@@ -1,31 +1,37 @@
 package com.example.qaevaluator.listener;
 
 import com.example.qaevaluator.dto.QuestionDTO;
+import com.example.qaevaluator.dto.EvaluationResultDTO;
 import com.example.qaevaluator.service.LlamaEvaluationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Service
+@Slf4j
 public class QuestionEvaluationListener {
 
-    private static final Logger log = LoggerFactory.getLogger(QuestionEvaluationListener.class);
-    private final LlamaEvaluationService evaluationService;
+    private final LlamaEvaluationService llamaEvaluationService;
+    private final KafkaTemplate<String, EvaluationResultDTO> kafkaTemplate;
 
-    public QuestionEvaluationListener(LlamaEvaluationService evaluationService) {
-        this.evaluationService = evaluationService;
+    public QuestionEvaluationListener(LlamaEvaluationService llamaEvaluationService,
+                                      KafkaTemplate<String, EvaluationResultDTO> kafkaTemplate) {
+        this.llamaEvaluationService = llamaEvaluationService;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
-    // TUTAJ dajemy adnotację Kafki
-    @KafkaListener(topics = "qa-pending-evaluations", groupId = "qa-evaluator-group")
-    public void consume(QuestionDTO request) {
-        log.info("Odebrano zdarzenie do oceny dla ID: {}", request.id());
+    @KafkaListener(topics = "qa-topic", groupId = "evaluator-group")
+    public void consume(QuestionDTO dto) {
+        log.info("Odebrano pytanie do oceny dla userId: {}", dto.userId());
 
-        // Wywołujemy Twój LlamaEvaluationService
-        String evaluationResult = evaluationService.evaluateAnswer(request);
+        // 1. Ocenia odpowiedź w Llamie
+        String feedback = llamaEvaluationService.evaluateAnswer(dto);
 
-        log.info("=== Wynik z Llamy dla ID: {} ===", request.id());
-        log.info(evaluationResult);
+        // 2. Publikuje wynik na topik 'qa-results' (skąd qa-api go odbierze i wyśle przez SSE)
+        EvaluationResultDTO result = new EvaluationResultDTO(dto.id(), dto.userId(), feedback);
+        kafkaTemplate.send("qa-results", result);
+
+        log.info("Wysłano ocenę na topik 'qa-results' dla userId: {}", dto.userId());
     }
 }

@@ -1,6 +1,7 @@
 package com.example.qaevaluator.dto;
 
 public record EvaluationResultDTO(
-        String id,
+        String questionId,
+        String userId,
         String feedback
 ) {}
